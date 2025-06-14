@@ -3,6 +3,7 @@ package selenium.plugin;
 import hudson.Extension;
 import hudson.init.InitMilestone;
 import hudson.init.Initializer;
+import hudson.model.Computer;
 import hudson.model.ManagementLink;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
@@ -278,6 +279,24 @@ public class SeleniumGlobalProperty extends ManagementLink {
         } catch (Exception e) {
             return "http://localhost:4444";
         }
+    }
+
+    public List<Computer> getAgents() {
+        return Arrays.stream(Jenkins.get().getComputers())
+                .filter(c -> !"Jenkins".equals(c.getDisplayName())) // Master/Controller ausschließen
+                .collect(Collectors.toList());
+    }
+
+    public boolean hasSeleniumServer(Computer computer) throws IOException, InterruptedException {
+        if (computer.getName().equals("") || computer.getSearchName().equals("Jenkins")) {
+            return getHubActive();
+        }
+        SeleniumAgentAction action = computer.getAction(SeleniumAgentAction.class);
+        return action != null && action.getNodeActive();
+    }
+
+    public String getAgentUrl(Computer computer) {
+        return Jenkins.get().getRootUrl() + "computer/" + computer.getName() + "/selenium";
     }
 
 }

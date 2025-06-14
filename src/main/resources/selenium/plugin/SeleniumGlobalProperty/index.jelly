@@ -45,8 +45,47 @@
                             <div style="color:red;">${it.hubStatusText}</div>
                         </j:otherwise>
                     </j:choose>
+                    <j:if test="${it.hubRunning}">
+                        <f:entry>
+                            <a href="${it.hubUrl}/ui/" target="_blank">
+                                <button type="button">Selenium Hub öffnen</button>
+                            </a>
+                        </f:entry>
+                    </j:if>
                 </f:entry>
+
             </f:form>
+            <f:section title="Selenium Server Status der Agenten">
+                <f:entry>
+                    <table class="pane sortable">
+                        <thead>
+                            <tr>
+                                <th class="pane-header">Agent Name</th>
+                                <th class="pane-header">Selenium Server Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <j:forEach var="agent" items="${it.agents}">
+                                <tr>
+                                    <td class="pane">
+                                        <a href="${it.getAgentUrl(agent)}">${agent.displayName}</a>
+                                    </td>
+                                    <td class="pane">
+                                        <j:choose>
+                                            <j:when test="${it.hasSeleniumServer(agent)}">
+                                                <span style="color:green;">Aktiv</span>
+                                            </j:when>
+                                            <j:otherwise>
+                                                <span style="color:red;">Inaktiv</span>
+                                            </j:otherwise>
+                                        </j:choose>
+                                    </td>
+                                </tr>
+                            </j:forEach>
+                        </tbody>
+                    </table>
+                </f:entry>
+            </f:section>
         </l:main-panel>
     </l:layout>
 </j:jelly>
